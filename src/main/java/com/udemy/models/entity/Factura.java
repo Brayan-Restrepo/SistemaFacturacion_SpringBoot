@@ -1,6 +1,7 @@
 package com.udemy.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
@@ -27,7 +29,7 @@ public class Factura implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private String descripcion;
-	private String obsevacion;
+	private String observacion;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name="create_at")
@@ -37,7 +39,20 @@ public class Factura implements Serializable{
 	private Cliente cliente;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinColumn(name="factura_id")
 	private List<ItemFactura> itemFacturas;
+		
+	public Factura() {
+		this.itemFacturas = new ArrayList<ItemFactura>();
+	}
+
+	public Double getTotal() {
+		Double total = 0.0;
+		for (int i = 0; i < this.itemFacturas.size(); i++) {
+			total += this.itemFacturas.get(i).calcularImporte();
+		}
+		return total;
+	}
 	
 	@PrePersist
 	@PreUpdate
@@ -45,6 +60,14 @@ public class Factura implements Serializable{
 		this.createAt = new Date();
 	}
 	
+	public List<ItemFactura> getItemFacturas() {
+		return itemFacturas;
+	}
+
+	public void setItemFacturas(List<ItemFactura> itemFacturas) {
+		this.itemFacturas = itemFacturas;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -58,11 +81,11 @@ public class Factura implements Serializable{
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public String getObsevacion() {
-		return obsevacion;
+	public String getObservacion() {
+		return observacion;
 	}
-	public void setObsevacion(String obsevacion) {
-		this.obsevacion = obsevacion;
+	public void setObservacion(String observacion) {
+		this.observacion = observacion;
 	}
 	public Date getCreateAt() {
 		return createAt;
@@ -76,7 +99,10 @@ public class Factura implements Serializable{
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
-
+	
+	public void addItemFactura(ItemFactura itemFactura) {
+		this.itemFacturas.add(itemFactura);
+	}
 	
 	private static final long serialVersionUID = 1L;
 }

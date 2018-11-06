@@ -25,7 +25,9 @@ public class FacturaController {
 	private IClienteService clienteServie;
 	
 	@GetMapping("/form/{clienteId}")
-	public String crear(@PathVariable(value="clienteId") Long clienteId, Map<String, Object> model, RedirectAttributes flash ) {
+	public String crear(@PathVariable(value="clienteId") Long clienteId, 
+			Map<String, Object> model, 
+			RedirectAttributes flash ) {
 		
 		Cliente cliente = this.clienteServie.findOne(clienteId);
 		if(cliente == null) {
